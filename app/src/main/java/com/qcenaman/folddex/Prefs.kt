@@ -10,6 +10,6 @@ class Prefs(context: Context) {
         set(v) = sp.edit().putInt("scale", v.coerceIn(Geometry.MIN_SCALE, Geometry.MAX_SCALE)).apply()
 
     var dpi: Int
-        get() = sp.getInt("dpi", 320)
+        get() = sp.getInt("dpi", 400)
         set(v) = sp.edit().putInt("dpi", v.coerceIn(Geometry.MIN_DPI, Geometry.MAX_DPI)).apply()
 }
