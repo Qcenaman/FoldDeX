@@ -22,7 +22,7 @@ class SettingsActivity : Activity() {
         }
 
         root.addView(TextView(this).apply { text = "Render resolution"; textSize = 18f })
-        val scales = listOf(100 to "Full (sharpest, smallest taskbar)", 75 to "75%", 50 to "50% (bigger taskbar)")
+        val scales = listOf(100 to "Full (sharpest, smallest taskbar)", 75 to "75%", 50 to "50%", 38 to "38% (taskbar matches desktop icons)")
         val group = RadioGroup(this)
         scales.forEach { (value, label) ->
             group.addView(RadioButton(this).apply {
