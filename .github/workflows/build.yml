@@ -1,0 +1,39 @@
+name: build
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Unit tests and APK
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon testDebugUnitTest assembleRelease
+      - name: Name the APK
+        run: |
+          v=$(grep -m1 'val appVersionName' app/build.gradle.kts | cut -d'"' -f2)
+          cp app/build/outputs/apk/release/app-release.apk "FoldDeX-$v.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: FoldDeX-*.apk
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          gh release view "$tag" >/dev/null 2>&1 || gh release create "$tag" --title "FoldDeX $tag" --notes ""
+          gh release upload "$tag" FoldDeX-*.apk --clobber
