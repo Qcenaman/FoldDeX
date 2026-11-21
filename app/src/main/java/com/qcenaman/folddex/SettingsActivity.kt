@@ -3,7 +3,9 @@ package com.qcenaman.folddex
 import android.app.Activity
 import android.os.Bundle
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.SeekBar
@@ -56,6 +58,13 @@ class SettingsActivity : Activity() {
             text = "Changes apply the next time DeX starts."
             setPadding(0, pad, 0, 0)
         })
-        setContentView(root)
+        val scroll = ScrollView(this).apply { addView(root) }
+        // Android 15 draws edge to edge: keep the content clear of the title bar, status bar and cutout.
+        scroll.setOnApplyWindowInsetsListener { v, insets ->
+            val bars = insets.getInsets(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            insets
+        }
+        setContentView(scroll)
     }
 }
